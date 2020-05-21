@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTableModule } from '@angular/material/table';
+import { HttpClientModule } from '@angular/common/http';
 
 const MAT_MODULES = [
   MatSliderModule,
@@ -14,6 +15,7 @@ const MAT_MODULES = [
   imports: [
     CommonModule,
     FormsModule,
+    HttpClientModule,
     ...MAT_MODULES
   ],
   exports: [
