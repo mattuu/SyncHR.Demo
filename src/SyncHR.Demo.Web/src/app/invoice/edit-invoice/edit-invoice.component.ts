@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { InvoiceService } from '../invoice.service';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { map, startWith } from 'rxjs/operators';
+import { ClientService } from 'src/app/shared/client.service';
 
 const MONTHS = [
   { value: 1, label: 'January' },
@@ -38,26 +39,54 @@ export class EditInvoiceComponent implements OnInit {
   options: string[] = ['One', 'Two', 'Three'];
   public filteredOptions: Observable<string[]>;
 
-  constructor(private _route: ActivatedRoute, private _router: Router, private _invoiceService: InvoiceService, private _formBuilder: FormBuilder) { }
+  constructor(private _route: ActivatedRoute,
+    private _router: Router,
+    private _invoiceService: InvoiceService,
+    private _clientService: ClientService,
+    private _formBuilder: FormBuilder) {
+  }
 
   ngOnInit(): void {
+    const clientPromise = this._clientService.get();
+
     this._route.params.subscribe(p => {
       this.id = +p['id'];
 
-      this._invoiceService.find(this.id).subscribe(val => {
-        this.invoice = val;
+      const invoicePromise = this._invoiceService.find(this.id);
+
+      forkJoin(clientPromise, invoicePromise).subscribe(res => {
+        const [clients, invoice] = res;
+
+        this.invoice = invoice;
 
         const {
           clientId,
           paymentTypeId,
           rows,
           ...invoiceHeader
-        } = val;
+        } = invoice;
 
         const invoiceModel = { ...invoiceHeader, 'client': '', 'paymentType': '', 'validate': '' };
 
         this.invoiceFormGroup.setValue(invoiceModel);
-      });
+
+        this.options = clients.map(c => c.name);
+      })
+
+      // this._invoiceService.find(this.id).subscribe(val => {
+      //   this.invoice = val;
+
+      //   const {
+      //     clientId,
+      //     paymentTypeId,
+      //     rows,
+      //     ...invoiceHeader
+      //   } = val;
+
+      //   const invoiceModel = { ...invoiceHeader, 'client': '', 'paymentType': '', 'validate': '' };
+
+      //   this.invoiceFormGroup.setValue(invoiceModel);
+      // });
     })
 
     this.filteredOptions = this.clientFormControl.valueChanges
@@ -77,7 +106,6 @@ export class EditInvoiceComponent implements OnInit {
     this.busy = true;
 
     const model = { ...formGroup.value, 'clientId': 1, 'paymentTypeId': 1 };
-debugger;
 
     this._invoiceService.update(this.id, model).subscribe(() => {
       this._router.navigate(['invoices']);
