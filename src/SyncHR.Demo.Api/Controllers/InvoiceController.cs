@@ -48,5 +48,38 @@ namespace SyncHR.Demo.Api.Controllers
 
             return Ok(model);
         }
+
+        [HttpPut("{id}")]
+        public IActionResult Put(int id, [FromBody] UpdateInvoiceModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var query = _context.Invoices.Find(id);
+
+            if (query == null)
+            {
+                return NotFound();
+            }
+
+            query.Year = model.Year;
+            query.Month = model.Month;
+            query.Number = model.Number;
+            query.IssueDate = model.IssueDate;
+            query.SellDate = model.SellDate;
+            query.IsPaid = model.IsPaid;
+            query.PaymentTypeId = model.PaymentTypeId;
+            query.ClientId = model.ClientId;
+            query.GrossAmount = model.GrossAmount;
+            query.NetAmount = model.NetAmount;
+
+            _context.SaveChanges();
+
+            var updated = _mapper.Map<InvoiceDetailsModel>(query);
+
+            return Ok(updated);
+        }
     }
 }

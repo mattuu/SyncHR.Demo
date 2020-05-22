@@ -4,7 +4,7 @@
     <div fxLayout="row" fxLayoutAlign="space-between" fxLayoutGap="10px">
         <mat-form-field class="form-element">
             <mat-label>Year</mat-label>
-            <input matInput placeholder="Year" formControlName="year" name="year">
+            <input matInput placeholder="Year" type="number" formControlName="year" name="year">
         </mat-form-field>
 
         <mat-form-field class="form-element">
@@ -16,7 +16,7 @@
 
         <mat-form-field class="form-element">
             <mat-label>Number</mat-label>
-            <input matInput placeholder="Number" formControlName="number">
+            <input matInput placeholder="Number" type="number" formControlName="number">
         </mat-form-field>
     </div>
 
@@ -51,7 +51,7 @@
     <div fxLayout="row" fxLayoutAlign="space-evenly" fxLayoutGap="10px">
         <mat-form-field class="form-element">
             <mat-label>Pay Time</mat-label>
-            <input matInput placeholder="Pay Time" formControlName="payTime">
+            <input matInput placeholder="Pay Time" type="number" formControlName="payTime" min="1" max="30">
         </mat-form-field>
 
         <mat-checkbox fxFlex formControlName="isPaid">Is Paid</mat-checkbox>
@@ -65,12 +65,12 @@
     <div fxLayout="row" fxLayoutAlign="space-between" fxLayoutGap="10px">
         <mat-form-field class="form-element">
             <mat-label>Gross Amount</mat-label>
-            <input matInput placeholder="Gross Amount" formControlName="grossAmount">
+            <input matInput placeholder="Gross Amount" type="number" formControlName="grossAmount">
         </mat-form-field>
 
         <mat-form-field class="form-element">
             <mat-label>Net Amount</mat-label>
-            <input matInput placeholder="Net Amount" formControlName="netAmount">
+            <input matInput placeholder="Net Amount" type="number" formControlName="netAmount">
         </mat-form-field>
     </div>
 

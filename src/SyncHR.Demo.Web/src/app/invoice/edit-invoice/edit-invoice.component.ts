@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { InvoiceService } from '../invoice.service';
 import { Observable } from 'rxjs';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -38,7 +38,7 @@ export class EditInvoiceComponent implements OnInit {
   options: string[] = ['One', 'Two', 'Three'];
   public filteredOptions: Observable<string[]>;
 
-  constructor(private _route: ActivatedRoute, private _invoiceService: InvoiceService, private _formBuilder: FormBuilder) { }
+  constructor(private _route: ActivatedRoute, private _router: Router, private _invoiceService: InvoiceService, private _formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
     this._route.params.subscribe(p => {
@@ -70,13 +70,24 @@ export class EditInvoiceComponent implements OnInit {
   }
 
   onSubmit(formGroup: FormGroup) {
-    if (!formGroup.invalid) {
+    if (formGroup.invalid) {
       return;
     }
 
     this.busy = true;
 
-    debugger;
+    const model = { ...formGroup.value, 'clientId': 1, 'paymentTypeId': 1 };
+debugger;
+
+    this._invoiceService.update(this.id, model).subscribe(() => {
+      this._router.navigate(['invoices']);
+      // TODO: display success message...
+    }, error => {
+      debugger;
+      // TODO: handle API error...
+    }, () => {
+      this.busy = false;
+    });
   }
 
   private createForm() {
