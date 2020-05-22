@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { InvoiceListComponent } from './invoice/invoice-list/invoice-list.component';
+import { InvoiceListComponent, EditInvoiceComponent } from './invoice';
 
 
 const routes: Routes = [
   { path: '', redirectTo: 'invoices', pathMatch: 'full' },
   { path: 'invoices', component: InvoiceListComponent },
+  { path: 'invoice/:id', component: EditInvoiceComponent }
 ];
 
 @NgModule({

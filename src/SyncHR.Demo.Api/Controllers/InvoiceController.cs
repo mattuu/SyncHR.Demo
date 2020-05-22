@@ -32,10 +32,21 @@ namespace SyncHR.Demo.Api.Controllers
             var query = _context.Invoices
                             .Include(i => i.Client)
                             .Include(i => i.PaymentType);
-                            
+
             var models = _mapper.Map<IEnumerable<InvoiceModel>>(query);
 
             return Ok(models);
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult Get(int id)
+        {
+            var query = _context.Invoices.Include(i => i.Rows)
+                            .SingleOrDefault(i => i.InvoiceId == id);
+
+            var model = _mapper.Map<InvoiceDetailsModel>(query);
+
+            return Ok(model);
         }
     }
 }

@@ -1,0 +1,74 @@
+<h1>edit-invoice works!</h1>
+
+<form class="full-width" *ngIf="invoice" [formGroup]="invoiceFormGroup">
+    <mat-form-field class="form-element">
+        <mat-label>Year</mat-label>
+        <input matInput placeholder="Year" formControlName="year" name="year">
+    </mat-form-field>
+
+    <mat-form-field class="form-element">
+        <mat-label>Select</mat-label>
+        <mat-select formControlName="month" placeholder="Month" name="month">
+            <mat-option [value]="month.value" *ngFor="let month of months">{{month.label}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="form-element">
+        <mat-label>Number</mat-label>
+        <input matInput placeholder="Number" formControlName="number">
+    </mat-form-field>
+
+    <mat-form-field class="form-element">
+        <input type="text" placeholder="Client" matInput formControlName="client" [formControl]="clientFormControl"
+            [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                {{option}}
+            </mat-option>
+        </mat-autocomplete>
+    </mat-form-field>
+
+    <mat-form-field class="form-element">
+        <mat-label>Number</mat-label>
+        <input matInput placeholder="Number" formControlName="number">
+    </mat-form-field>
+
+    <mat-form-field class="form-element">
+        <mat-label>Sale Date</mat-label>
+        <input matInput [matDatepicker]="sellDatePicker" formControlName="sellDate">
+        <mat-datepicker-toggle matSuffix [for]="sellDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #sellDatePicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field class="form-element">
+        <mat-label>Issue Date</mat-label>
+        <input matInput [matDatepicker]="issueDatePicker" formControlName="issueDate">
+        <mat-datepicker-toggle matSuffix [for]="issueDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #issueDatePicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field class="form-element">
+        <mat-label>Pay Time</mat-label>
+        <input matInput placeholder="Pay Time" formControlName="payTime">
+    </mat-form-field>
+
+    <mat-checkbox class="form-element" formControlName="isPaid">Is Paid</mat-checkbox>
+
+    <mat-form-field class="form-element">
+        <mat-label>Payment Type</mat-label>
+        <input matInput placeholder="Payment Type" formControlName="paymentType">
+    </mat-form-field>
+
+    <mat-form-field class="form-element">
+        <mat-label>Gross Amount</mat-label>
+        <input matInput placeholder="Gross Amount" formControlName="grossAmount">
+    </mat-form-field>
+
+    <mat-form-field class="form-element">
+        <mat-label>Net Amount</mat-label>
+        <input matInput placeholder="Net Amount" formControlName="netAmount">
+    </mat-form-field>
+
+</form>
+
+<pre>{{ invoice | json }}</pre>
