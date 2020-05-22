@@ -2,9 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { InvoiceService } from '../invoice.service';
 import { Observable, forkJoin } from 'rxjs';
-import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { map, startWith, debounceTime, switchMap } from 'rxjs/operators';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { debounceTime, switchMap, tap, finalize } from 'rxjs/operators';
 import { ClientService } from 'src/app/shared/client.service';
+import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
+import { AppDateAdapter, APP_DATE_FORMATS } from 'src/app/shared/date-adapter';
 
 const MONTHS = [
   { value: 1, label: 'January' },
@@ -24,7 +26,11 @@ const MONTHS = [
 @Component({
   selector: 'app-edit-invoice',
   templateUrl: './edit-invoice.component.html',
-  styleUrls: ['./edit-invoice.component.scss']
+  styleUrls: ['./edit-invoice.component.scss'],
+  providers: [
+    { provide: DateAdapter, useClass: AppDateAdapter },
+    { provide: MAT_DATE_FORMATS, useValue: APP_DATE_FORMATS }
+  ]
 })
 export class EditInvoiceComponent implements OnInit {
 
@@ -32,12 +38,12 @@ export class EditInvoiceComponent implements OnInit {
   public id: number;
   public invoice: any;
   busy: boolean;
+  clientsBusy: boolean;
 
   clientAutocompleteDisplayFn = client => client.name;
 
   public months: any[] = MONTHS;
 
-  options: string[] = ['One', 'Two', 'Three'];
   public filteredClientOptions: Observable<any>;
 
   constructor(private _route: ActivatedRoute,
@@ -69,11 +75,7 @@ export class EditInvoiceComponent implements OnInit {
         const invoiceModel = { ...invoiceHeader, 'paymentType': '', 'validate': '' };
 
         this.invoiceFormGroup.setValue(invoiceModel);
-
-        this.options = clients.map(c => c.name);
       })
-
-
     })
 
     this.createForm();
@@ -82,8 +84,12 @@ export class EditInvoiceComponent implements OnInit {
       .valueChanges
       .pipe(
         debounceTime(300),
-        switchMap(value => this._clientService.find(value))
-      );
+        tap(() => this.clientsBusy = true),
+        switchMap(value => this._clientService.find(value)
+          .pipe(
+            finalize(() => this.clientsBusy = false),
+          )
+        ));
   }
 
   onSubmit(formGroup: FormGroup) {

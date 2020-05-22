@@ -13,6 +13,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 const MAT_MODULES = [
@@ -25,7 +26,8 @@ const MAT_MODULES = [
   MatDatepickerModule,
   MatNativeDateModule,
   MatCheckboxModule,
-  MatButtonModule
+  MatButtonModule,
+  MatProgressSpinnerModule
 ]
 
 const MODULES_FOR_REEXPORT = [
