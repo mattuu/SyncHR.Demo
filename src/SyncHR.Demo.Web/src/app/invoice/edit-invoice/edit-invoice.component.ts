@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { InvoiceService } from '../invoice.service';
 import { Observable, forkJoin } from 'rxjs';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { map, startWith } from 'rxjs/operators';
+import { map, startWith, debounceTime, switchMap } from 'rxjs/operators';
 import { ClientService } from 'src/app/shared/client.service';
 
 const MONTHS = [
@@ -33,11 +33,12 @@ export class EditInvoiceComponent implements OnInit {
   public invoice: any;
   busy: boolean;
 
+  clientAutocompleteDisplayFn = client => client.name;
+
   public months: any[] = MONTHS;
 
-  public clientFormControl = new FormControl();
   options: string[] = ['One', 'Two', 'Three'];
-  public filteredOptions: Observable<string[]>;
+  public filteredClientOptions: Observable<any>;
 
   constructor(private _route: ActivatedRoute,
     private _router: Router,
@@ -60,42 +61,29 @@ export class EditInvoiceComponent implements OnInit {
         this.invoice = invoice;
 
         const {
-          clientId,
           paymentTypeId,
           rows,
           ...invoiceHeader
         } = invoice;
 
-        const invoiceModel = { ...invoiceHeader, 'client': '', 'paymentType': '', 'validate': '' };
+        const invoiceModel = { ...invoiceHeader, 'paymentType': '', 'validate': '' };
 
         this.invoiceFormGroup.setValue(invoiceModel);
 
         this.options = clients.map(c => c.name);
       })
 
-      // this._invoiceService.find(this.id).subscribe(val => {
-      //   this.invoice = val;
 
-      //   const {
-      //     clientId,
-      //     paymentTypeId,
-      //     rows,
-      //     ...invoiceHeader
-      //   } = val;
-
-      //   const invoiceModel = { ...invoiceHeader, 'client': '', 'paymentType': '', 'validate': '' };
-
-      //   this.invoiceFormGroup.setValue(invoiceModel);
-      // });
     })
 
-    this.filteredOptions = this.clientFormControl.valueChanges
-      .pipe(
-        startWith(''),
-        map(value => this._filter(value))
-      );
-
     this.createForm();
+
+    this.filteredClientOptions = this.invoiceFormGroup.get('client')
+      .valueChanges
+      .pipe(
+        debounceTime(300),
+        switchMap(value => this._clientService.find(value))
+      );
   }
 
   onSubmit(formGroup: FormGroup) {
@@ -105,7 +93,7 @@ export class EditInvoiceComponent implements OnInit {
 
     this.busy = true;
 
-    const model = { ...formGroup.value, 'clientId': 1, 'paymentTypeId': 1 };
+    const model = { ...formGroup.value, 'clientId': formGroup.get('client').value.id, 'paymentTypeId': 1 };
 
     this._invoiceService.update(this.id, model).subscribe(() => {
       this._router.navigate(['invoices']);
@@ -134,11 +122,4 @@ export class EditInvoiceComponent implements OnInit {
       'validate': ''
     });
   }
-
-  private _filter(value: string): string[] {
-    const filterValue = value.toLowerCase();
-
-    return this.options.filter(option => option.toLowerCase().includes(filterValue));
-  }
-
 }

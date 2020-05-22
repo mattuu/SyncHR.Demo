@@ -11,7 +11,7 @@ namespace SyncHR.Demo.API.Models
 
         public int Number { get; set; }
 
-        public int ClientId { get; set; }
+        public ClientModel Client {get;set;}
 
         public DateTime SellDate { get; set; }
 

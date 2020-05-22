@@ -22,11 +22,10 @@
 
     <div>
         <mat-form-field class="form-element">
-            <input type="text" placeholder="Client" matInput formControlName="client" [formControl]="clientFormControl"
-                [matAutocomplete]="auto">
-            <mat-autocomplete #auto="matAutocomplete">
-                <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-                    {{option}}
+            <input type="text" placeholder="Client" matInput formControlName="client" [matAutocomplete]="auto" >
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="clientAutocompleteDisplayFn">
+                <mat-option *ngFor="let option of filteredClientOptions | async" [value]="option">
+                    {{option.name}}
                 </mat-option>
             </mat-autocomplete>
         </mat-form-field>

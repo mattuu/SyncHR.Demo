@@ -1,4 +1,5 @@
 using AutoMapper;
+using SyncHR.Demo.API.Models;
 using SyncHR.Demo.DataAccess.Models;
 
 namespace SyncHR.Demo.Api.Profiles

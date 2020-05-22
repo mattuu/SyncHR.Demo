@@ -1,4 +1,4 @@
-namespace SyncHR.Demo.DataAccess.Models
+namespace SyncHR.Demo.API.Models
 {
     public class ClientModel
     {
