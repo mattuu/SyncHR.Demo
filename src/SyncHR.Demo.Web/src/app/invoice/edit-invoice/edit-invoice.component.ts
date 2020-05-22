@@ -30,6 +30,7 @@ export class EditInvoiceComponent implements OnInit {
   invoiceFormGroup: FormGroup;
   public id: number;
   public invoice: any;
+  busy: boolean;
 
   public months: any[] = MONTHS;
 
@@ -68,7 +69,17 @@ export class EditInvoiceComponent implements OnInit {
     this.createForm();
   }
 
-  createForm() {
+  onSubmit(formGroup: FormGroup) {
+    if (!formGroup.invalid) {
+      return;
+    }
+
+    this.busy = true;
+
+    debugger;
+  }
+
+  private createForm() {
     this.invoiceFormGroup = this._formBuilder.group({
       'year': [null, Validators.required],
       'month': [null, Validators.required],

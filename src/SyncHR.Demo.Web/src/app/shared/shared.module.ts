@@ -12,6 +12,8 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatButtonModule } from '@angular/material/button';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 const MAT_MODULES = [
   MatSliderModule,
@@ -22,14 +24,16 @@ const MAT_MODULES = [
   MatAutocompleteModule,
   MatDatepickerModule,
   MatNativeDateModule,
-  MatCheckboxModule
+  MatCheckboxModule,
+  MatButtonModule
 ]
 
 const MODULES_FOR_REEXPORT = [
   FormsModule,
   RouterModule,
   HttpClientModule,
-  ReactiveFormsModule
+  ReactiveFormsModule,
+  FlexLayoutModule
 ]
 
 @NgModule({
@@ -41,7 +45,8 @@ const MODULES_FOR_REEXPORT = [
   ],
   exports: [
     ...MODULES_FOR_REEXPORT,
-    ...MAT_MODULES
+    ...MAT_MODULES,
+
   ]
 })
 export class SharedModule { }
