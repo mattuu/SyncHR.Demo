@@ -1,4 +1,7 @@
 <h1>edit-invoice works!</h1>
+
+<pre>{{ mode }}</pre>
+
 <form *ngIf="invoice" [formGroup]="invoiceFormGroup" (ngSubmit)="onSubmit(invoiceFormGroup)">
     <div fxLayout="row" fxLayoutAlign="space-between" fxLayoutGap="10px">
         <mat-form-field class="form-element">
@@ -81,6 +84,7 @@
         <button mat-raised-button color="primary" type="submit" class="button" [class.spinner]="busy"
             [disabled]="busy">Submit</button>
         <button mat-raised-button [routerLink]="['/invoices']" color="secondary" [disabled]="busy">Cancel</button>
+        <button mat-raised-button color="warn" type="button" [disabled]="busy" (click)="deleteInvoice()">Delete</button>
     </div>
 </form>
 

@@ -118,7 +118,7 @@ namespace SyncHR.Demo.DataAccess
                 entity.HasOne(d => d.Invoice)
                     .WithMany(p => p.Rows)
                     .HasForeignKey(d => d.InvoiceId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_InvoiceRow_Invoice");
             });
 

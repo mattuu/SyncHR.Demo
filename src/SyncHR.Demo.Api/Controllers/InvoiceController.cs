@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SyncHR.Demo.API.Models;
 using SyncHR.Demo.DataAccess;
+using SyncHR.Demo.DataAccess.Models;
 
 namespace SyncHR.Demo.Api.Controllers
 {
@@ -51,8 +52,24 @@ namespace SyncHR.Demo.Api.Controllers
             return Ok(model);
         }
 
+        [HttpPost()]
+        public IActionResult Post([FromBody] CreateOrUpdateInvoiceModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var invoice = _mapper.Map<Invoice>(model);
+
+            _context.Invoices.Add(invoice);
+            _context.SaveChanges();
+
+            return Ok(invoice.InvoiceId);
+        }
+
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] UpdateInvoiceModel model)
+        public IActionResult Put(int id, [FromBody] CreateOrUpdateInvoiceModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -79,9 +96,23 @@ namespace SyncHR.Demo.Api.Controllers
 
             _context.SaveChanges();
 
-            var updated = _mapper.Map<InvoiceDetailsModel>(query);
+            return Ok();
+        }
 
-            return Ok(updated);
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            var invoice = _context.Invoices.Find(id);
+
+            if (invoice == null)
+            {
+                return NotFound();
+            }
+
+            _context.Invoices.Remove(invoice);
+            _context.SaveChanges();
+
+            return NoContent();
         }
     }
 }

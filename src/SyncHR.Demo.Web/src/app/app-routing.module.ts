@@ -6,6 +6,7 @@ import { InvoiceListComponent, EditInvoiceComponent } from './invoice';
 const routes: Routes = [
   { path: '', redirectTo: 'invoices', pathMatch: 'full' },
   { path: 'invoices', component: InvoiceListComponent },
+  { path: 'new', component: EditInvoiceComponent },
   { path: 'invoice/:id', component: EditInvoiceComponent }
 ];
 

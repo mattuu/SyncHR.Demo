@@ -48,7 +48,7 @@ CREATE TABLE [dbo].[Invoice]
 
 
  CONSTRAINT [PK_Invoice] PRIMARY KEY CLUSTERED ([InvoiceId] ASC),
- CONSTRAINT [FK_51] FOREIGN KEY ([PaymentTypeId])  REFERENCES [dbo].[PaymentType]([PaymentTypeId]),
+ CONSTRAINT [FK_Invoice_PaymentType] FOREIGN KEY ([PaymentTypeId])  REFERENCES [dbo].[PaymentType]([PaymentTypeId]),
  CONSTRAINT [FK_Invoice_Client] FOREIGN KEY ([ClientId])  REFERENCES [dbo].[Client]([ClientId])
 );
 GO
@@ -86,7 +86,7 @@ CREATE TABLE [dbo].[InvoiceRow]
 
 
  CONSTRAINT [PK_InvoiceRow] PRIMARY KEY CLUSTERED ([InvoiceRowId] ASC),
- CONSTRAINT [FK_InvoiceRow_Invoice] FOREIGN KEY ([InvoiceId])  REFERENCES [dbo].[Invoice]([InvoiceId])
+ CONSTRAINT [FK_InvoiceRow_Invoice] FOREIGN KEY ([InvoiceId])  REFERENCES [dbo].[Invoice]([InvoiceId]) ON DELETE CASCADE
 );
 GO
 
@@ -97,22 +97,3 @@ CREATE NONCLUSTERED INDEX [fkIdx_InvoiceRow_Invoice] ON [dbo].[InvoiceRow]
  )
 
 GO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

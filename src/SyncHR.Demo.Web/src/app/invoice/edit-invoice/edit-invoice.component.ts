@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { InvoiceService } from '../invoice.service';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { debounceTime, switchMap, tap, finalize } from 'rxjs/operators';
 import { ClientService } from 'src/app/shared/client.service';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { AppDateAdapter, APP_DATE_FORMATS } from 'src/app/shared/date-adapter';
 import { PaymentTypeService } from 'src/app/shared/payment-type.service';
+import { error } from 'protractor';
 
 const MONTHS = [
   { value: 1, label: 'January' },
@@ -23,6 +24,26 @@ const MONTHS = [
   { value: 11, label: 'November' },
   { value: 12, label: 'December' }
 ];
+
+const NEW_INVOICE = {
+  year: '',
+  month: '',
+  number: '',
+  sellDate: new Date(),
+  issueDate: new Date(),
+  isPaid: false,
+  payTime: '',
+  client: { id: 0 },
+  paymentType: { id: 1 },
+  grossAmount: 0,
+  netAmount: 0,
+  rows: []
+}
+
+export enum Mode {
+  edit,
+  add
+}
 
 @Component({
   selector: 'app-edit-invoice',
@@ -44,7 +65,8 @@ export class EditInvoiceComponent implements OnInit {
 
   clientAutocompleteDisplayFn = client => client.name;
 
-  public months: any[] = MONTHS;
+  months: any[] = MONTHS;
+  mode: Mode;
 
   public filteredClientOptions: Observable<any>;
 
@@ -62,7 +84,9 @@ export class EditInvoiceComponent implements OnInit {
     this._route.params.subscribe(p => {
       this.id = +p['id'];
 
-      const invoicePromise = this._invoiceService.find(this.id);
+      this.mode = isNaN(this.id) ? Mode.add : Mode.edit;
+
+      const invoicePromise = this.mode === Mode.edit ? this._invoiceService.find(this.id) : of(NEW_INVOICE);
 
       forkJoin(invoicePromise, paymentTypesPromise).subscribe(res => {
         const [invoice, paymentTypes] = res;
@@ -105,7 +129,11 @@ export class EditInvoiceComponent implements OnInit {
 
     const model = { ...formGroup.value, 'clientId': formGroup.get('client').value.id, 'paymentTypeId': formGroup.get('paymentType').value };
 
-    this._invoiceService.update(this.id, model).subscribe(() => {
+    const action = this.mode === model.edit ?
+      this._invoiceService.update(this.id, model) :
+      this._invoiceService.create(model);
+
+    action.subscribe(() => {
       this._router.navigate(['invoices']);
       // TODO: display success message...
     }, error => {
@@ -114,6 +142,16 @@ export class EditInvoiceComponent implements OnInit {
     }, () => {
       this.busy = false;
     });
+  }
+
+  deleteInvoice(){
+    this._invoiceService.delete(this.id).subscribe(() => {
+      this._router.navigate(['invoices']);
+      //TODO: display success message...
+    }, error => {
+      debugger;
+      console.log(error);
+    })
   }
 
   private createForm() {

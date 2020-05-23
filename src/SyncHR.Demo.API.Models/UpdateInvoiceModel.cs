@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SyncHR.Demo.API.Models
 {
-    public class UpdateInvoiceModel
+    public class CreateOrUpdateInvoiceModel
     {
         [Required]
         public int Year { get; set; }
