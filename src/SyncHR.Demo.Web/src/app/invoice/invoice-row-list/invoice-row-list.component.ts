@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { DataSource } from '@angular/cdk/table';
 import { of, Observable, Subject, merge } from 'rxjs';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, NgModel } from '@angular/forms';
 import { InvoiceRowService } from 'src/app/shared/invoice-row.service';
 import { MatTable } from '@angular/material/table';
 import { switchMap } from 'rxjs/operators';
@@ -12,6 +12,12 @@ export interface IInvoiceRowModel {
   'quantity': number;
   'unit': string;
   'unitPrice': number;
+}
+
+export enum Mode {
+  default,
+  edit,
+  add
 }
 
 @Component({
@@ -33,18 +39,24 @@ export class InvoiceRowListComponent implements OnInit {
     return this._rows;
   }
 
+  get isEditing(): boolean {
+    return this.mode === Mode.edit;
+  }
+
   @Input()
   public invoiceId: number;
 
   @ViewChild('invoiceRowsTable')
   table: MatTable<any>;
 
+  mode = Mode.default;
   dataSource: InvoiceRowsDataSource;
   submitBusy: boolean;
+  selectedRowId: number;
 
   displayedColumns = ['productName', 'quantity', 'unit', 'unitPrice', 'actions']
 
-  newRowForm: FormGroup;
+  invoiceRowForm: FormGroup;
 
   // 'productName': 'Wine - Cotes Du Rhone',
   //   'quantity': 16.66,
@@ -54,7 +66,7 @@ export class InvoiceRowListComponent implements OnInit {
   constructor(private _formBuilder: FormBuilder, private _invoiceRowService: InvoiceRowService) { }
 
   ngOnInit(): void {
-    this.newRowForm = this._formBuilder.group({
+    this.invoiceRowForm = this._formBuilder.group({
       'productName': [null, Validators.required],
       'quantity': [null, Validators.required],
       'unit': [null, Validators.required],
@@ -74,7 +86,7 @@ export class InvoiceRowListComponent implements OnInit {
     });
   }
 
-  addRow(formGroup: FormGroup) {
+  submit(formGroup: FormGroup) {
     if (formGroup.valid) {
       const {
         validate,
@@ -83,19 +95,81 @@ export class InvoiceRowListComponent implements OnInit {
 
       this.submitBusy = true;
 
-      this._invoiceRowService.create(this.invoiceId, formGroup.value)
-        .subscribe(() => {
-          this.dataSource.add(model).subscribe(() => {
-            this.table.renderRows();
-            this.newRowForm.reset();
-            this.newRowForm.setErrors([]);
-          });
-        }, error => {
-          console.log(error)
-        }, () => {
-          this.submitBusy = false;
-        });
+      let action;
+      switch (this.mode) {
+        case 1:
+          this.dataSource.get(this.selectedRowId).subscribe(item => {
+            action = this._invoiceRowService.update(item.id, model);
+          })
+          break;
+        case 2:
+          action = this._invoiceRowService.create(this.invoiceId, model);
+        default:
+          break;
+      }
+
+      action.subscribe(() => {
+        switch (this.mode) {
+          case 1:
+            this.switchToDefaultView();
+            break;
+          case 2:
+            this.dataSource.add(model).subscribe(() => {
+              this.switchToDefaultView();
+            });
+            break;
+          default:
+            break;
+        }
+
+      }, error => {
+        console.log(error)
+      }, () => {
+        this.submitBusy = false;
+      });
     }
+  }
+
+  editRow(index: number) {
+    // this.table.
+    this.selectedRowId = index;
+
+    this.dataSource.get(index).subscribe(item => {
+      this.switchMode(Mode.edit);
+
+      const { id, ...data } = item;
+      const model = { ...data, 'validate': '' };
+
+      this.invoiceRowForm.setValue(model);
+    })
+
+  }
+
+  cancelEdit() {
+    this.switchToDefaultView();
+  }
+
+  enableAdd() {
+    this.switchMode(Mode.add);
+  }
+
+  cancelAdd() {
+    this.switchToDefaultView();
+  }
+
+  toggleEdit() {
+    this.mode = this.mode === Mode.edit ? Mode.default : Mode.edit;
+  }
+
+  private switchMode(mode: Mode) {
+    this.mode = mode;
+  }
+
+  private switchToDefaultView() {
+    this.table.renderRows();
+    this.invoiceRowForm.reset();
+    this.invoiceRowForm.setErrors([]);
+    this.switchMode(Mode.default);
   }
 
 }
@@ -106,11 +180,17 @@ export class InvoiceRowsDataSource extends DataSource<any>
     super();
   }
 
+  get(index: number): Observable<any> {
+    const item = this._rows[index];
+    return of(item);
+  }
+
   add(model: any): Observable<any> {
     this._rows.push(model);
 
     return of(this._rows);
   }
+
 
   remove(id: number): Observable<any> {
     const item = this._rows.find(r => r['id'] === id)

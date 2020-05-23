@@ -1,13 +1,15 @@
 <p>invoice-row-list works!</p>
-<form [formGroup]="newRowForm" (ngSubmit)="addRow(newRowForm)">
+
+<button mat-raised-button color="primary" (click)="toggleEdit()">mode: {{ mode }}</button>
+
+<form [formGroup]="invoiceRowForm" (ngSubmit)="submit(invoiceRowForm)">
 
     <table mat-table [dataSource]="rows" #invoiceRowsTable class="mat-elevation-z8">
-
         <ng-container matColumnDef="productName">
             <th mat-header-cell *matHeaderCellDef> Name </th>
             <td mat-cell *matCellDef="let element"> {{element.productName}} </td>
             <td mat-footer-cell *matFooterCellDef>
-                <mat-form-field appearance="standard">
+                <mat-form-field appearance="standard" *ngIf="mode === 2">
                     <input matInput formControlName="productName" placeholder="Product Name" required type="text"
                         minlength="3" maxlength="200">
                 </mat-form-field>
@@ -16,9 +18,16 @@
 
         <ng-container matColumnDef="quantity">
             <th mat-header-cell *matHeaderCellDef> Qty </th>
-            <td mat-cell *matCellDef="let element"> {{element.quantity}} </td>
+            <td mat-cell *matCellDef="let element; let i = index">
+                <ng-template #elseTemplate>{{element.quantity}}</ng-template>
+                <ng-container *ngIf="mode === 1 && selectedRowId === i; else elseTemplate">
+                    <mat-form-field appearance="standard">
+                        <input matInput formControlName="quantity" placeholder="Quantity" required type="number">
+                    </mat-form-field>
+                </ng-container>
+            </td>
             <td mat-footer-cell *matFooterCellDef>
-                <mat-form-field appearance="standard">
+                <mat-form-field appearance="standard" *ngIf="mode === 2">
                     <input matInput formControlName="quantity" placeholder="Quantity" required type="number">
                 </mat-form-field>
             </td>
@@ -28,7 +37,7 @@
             <th mat-header-cell *matHeaderCellDef> Unit </th>
             <td mat-cell *matCellDef="let element"> {{element.unit}} </td>
             <td mat-footer-cell *matFooterCellDef>
-                <mat-form-field appearance="standard">
+                <mat-form-field appearance="standard" *ngIf="mode === 2">
                     <input matInput formControlName="unit" placeholder="Unit" required type="text">
                 </mat-form-field>
             </td>
@@ -38,7 +47,7 @@
             <th mat-header-cell *matHeaderCellDef> Unit Price </th>
             <td mat-cell *matCellDef="let element"> {{element.unitPrice}} </td>
             <td mat-footer-cell *matFooterCellDef>
-                <mat-form-field appearance="standard">
+                <mat-form-field appearance="standard" *ngIf="mode === 2">
                     <input matInput formControlName="unitPrice" placeholder="Unit Price" required type="number">
                 </mat-form-field>
             </td>
@@ -46,23 +55,47 @@
 
         <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef> Actions </th>
-            <td mat-cell *matCellDef="let element">
-                <button mat-icon-button color="warn" class="button" type="button" (click)="deleteRow(element.id)">
-                    <mat-icon>delete</mat-icon>
-                </button>
-                <button mat-icon-button color="primary" class="button" type="button" (click)="deleteRow(element.id)">
-                    <mat-icon>edit</mat-icon>
-                </button>
+            <td mat-cell *matCellDef="let element; let i = index">
+
+                <ng-container *ngIf="mode === 1 && selectedRowId === i">
+                    <button mat-icon-button color="primary" type="submit" class="button"
+                        [disabled]="invoiceRowForm.invalid || submitBusy">
+                        <mat-icon>save</mat-icon>
+                    </button>
+                    <button mat-icon-button color="warn" type="reset" class="button" (click)="cancelEdit()">
+                        <mat-icon>cancel</mat-icon>
+                    </button>
+                </ng-container>
+
+                <ng-container *ngIf="mode !== 1 || selectedRowId !== i">
+                    <button mat-icon-button color="warn" class="button" type="button" (click)="deleteRow(element.id)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                    <button mat-icon-button color="primary" class="button" type="button" (click)="editRow(i)">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                </ng-container>
+
             </td>
             <td mat-footer-cell *matFooterCellDef>
-                <button mat-icon-button color="primary" type="submit" class="button"
-                    [disabled]="newRowForm.invalid || submitBusy">
-                    <mat-icon>save</mat-icon>
-                </button>
-                <button mat-icon-button color="warn" type="reset" class="button"
-                    [disabled]="newRowForm.pristine || submitBusy">
-                    <mat-icon>cancel</mat-icon>
-                </button>
+
+                <ng-container [ngSwitch]="mode">
+                    <ng-container *ngSwitchCase="2">
+                        <button mat-icon-button color="primary" type="submit" class="button"
+                            [disabled]="invoiceRowForm.invalid || submitBusy">
+                            <mat-icon>save</mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" type="button" class="button" (click)="cancelAdd()">
+                            <mat-icon>cancel</mat-icon>
+                        </button>
+                    </ng-container>
+                    <div *ngSwitchDefault>
+                        <button mat-icon-button color="primary" type="button" class="button" (click)="enableAdd()"
+                            [disabled]="isEditing">
+                            <mat-icon>playlist_add</mat-icon>
+                        </button>
+                    </div>
+                </ng-container>
             </td>
         </ng-container>
 
