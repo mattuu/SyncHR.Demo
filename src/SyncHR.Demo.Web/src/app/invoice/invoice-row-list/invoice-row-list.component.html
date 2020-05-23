@@ -27,14 +27,6 @@
         <ng-container matColumnDef="quantity">
             <th mat-header-cell *matHeaderCellDef> Qty </th>
             <td mat-cell *matCellDef="let element; let i = index">
-
-
-                <!-- <ng-template #elseTemplate>{{element.quantity}}</ng-template>
-                <ng-container *ngIf="mode === 1 && selectedRowId === i; else elseTemplate">
-                    <mat-form-field appearance="standard">
-                        <input matInput formControlName="quantity" placeholder="Quantity" required type="number">
-                    </mat-form-field>
-                </ng-container> -->
                 <app-invoice-row-list-cell [editable]="mode === 1 && selectedRowId === i">
                     <mat-form-field appearance="standard" editTemplate>
                         <input matInput formControlName="quantity" placeholder="Quantity" required type="number">
@@ -43,7 +35,6 @@
                         {{element.quantity}}
                     </ng-container>
                 </app-invoice-row-list-cell>
-
             </td>
             <td mat-footer-cell *matFooterCellDef>
                 <mat-form-field appearance="standard" *ngIf="mode === 2">
@@ -142,5 +133,3 @@
         <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
     </table>
 </form>
-
-<pre>{{ rows | json }}</pre>
