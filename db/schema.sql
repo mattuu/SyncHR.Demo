@@ -3,9 +3,12 @@
 -- ****************** SqlDBM: Microsoft SQL Server ******************
 -- ******************************************************************
 
+USE SyncHRDemo
+GO
+
 CREATE TABLE [dbo].[Client]
 (
- [ClientId] int NOT NULL ,
+ [ClientId] int NOT NULL IDENTITY(1, 1),
  [Name]     varchar(512) NOT NULL ,
  [TaxCode]  varchar(128) NOT NULL ,
  [Address]  varchar(1024) NOT NULL ,
@@ -19,7 +22,7 @@ GO
 
 CREATE TABLE [dbo].[PaymentType]
 (
- [PaymentTypeId] int NOT NULL ,
+ [PaymentTypeId] int NOT NULL IDENTITY(1, 1) ,
  [Name]          varchar(128) NOT NULL ,
 
 
@@ -30,7 +33,7 @@ GO
 
 CREATE TABLE [dbo].[Invoice]
 (
- [InvoiceId]     int NOT NULL ,
+ [InvoiceId]     int NOT NULL IDENTITY(1, 1),
  [Year]          int NOT NULL ,
  [Month]         int NOT NULL ,
  [Number]        int NOT NULL ,
@@ -74,7 +77,7 @@ GO
 
 CREATE TABLE [dbo].[InvoiceRow]
 (
- [InvoiceRowId] int NOT NULL ,
+ [InvoiceRowId] int NOT NULL IDENTITY(1, 1) ,
  [ProductName]  varchar(500) NOT NULL ,
  [Quantity]     decimal(6,2) NOT NULL ,
  [Unit]         varchar(50) NOT NULL ,

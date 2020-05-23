@@ -7,6 +7,7 @@ import { debounceTime, switchMap, tap, finalize } from 'rxjs/operators';
 import { ClientService } from 'src/app/shared/client.service';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { AppDateAdapter, APP_DATE_FORMATS } from 'src/app/shared/date-adapter';
+import { PaymentTypeService } from 'src/app/shared/payment-type.service';
 
 const MONTHS = [
   { value: 1, label: 'January' },
@@ -39,6 +40,7 @@ export class EditInvoiceComponent implements OnInit {
   public invoice: any;
   busy: boolean;
   clientsBusy: boolean;
+  paymentTypes: [];
 
   clientAutocompleteDisplayFn = client => client.name;
 
@@ -50,29 +52,31 @@ export class EditInvoiceComponent implements OnInit {
     private _router: Router,
     private _invoiceService: InvoiceService,
     private _clientService: ClientService,
+    private _paymentTypeService: PaymentTypeService,
     private _formBuilder: FormBuilder) {
   }
 
   ngOnInit(): void {
-    const clientPromise = this._clientService.get();
+    const paymentTypesPromise = this._paymentTypeService.get();
 
     this._route.params.subscribe(p => {
       this.id = +p['id'];
 
       const invoicePromise = this._invoiceService.find(this.id);
 
-      forkJoin(clientPromise, invoicePromise).subscribe(res => {
-        const [clients, invoice] = res;
+      forkJoin(invoicePromise, paymentTypesPromise).subscribe(res => {
+        const [invoice, paymentTypes] = res;
 
         this.invoice = invoice;
+        this.paymentTypes = paymentTypes;
 
         const {
-          paymentTypeId,
+          paymentType: { id: paymentTypeId },
           rows,
           ...invoiceHeader
         } = invoice;
 
-        const invoiceModel = { ...invoiceHeader, 'paymentType': '', 'validate': '' };
+        const invoiceModel = { ...invoiceHeader, 'paymentType': paymentTypeId, 'validate': '' };
 
         this.invoiceFormGroup.setValue(invoiceModel);
       })
@@ -99,7 +103,7 @@ export class EditInvoiceComponent implements OnInit {
 
     this.busy = true;
 
-    const model = { ...formGroup.value, 'clientId': formGroup.get('client').value.id, 'paymentTypeId': 1 };
+    const model = { ...formGroup.value, 'clientId': formGroup.get('client').value.id, 'paymentTypeId': formGroup.get('paymentType').value };
 
     this._invoiceService.update(this.id, model).subscribe(() => {
       this._router.navigate(['invoices']);

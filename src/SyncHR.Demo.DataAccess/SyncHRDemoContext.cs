@@ -36,7 +36,7 @@ namespace SyncHR.Demo.DataAccess
             {
                 entity.ToTable("Client");
 
-                entity.Property(e => e.ClientId).ValueGeneratedNever();
+                entity.HasKey(e => e.ClientId);
 
                 entity.Property(e => e.Address)
                     .IsRequired()
@@ -63,13 +63,13 @@ namespace SyncHR.Demo.DataAccess
             {
                 entity.ToTable("Invoice");
               
+                entity.HasKey(e => e.InvoiceId);
+
                 entity.HasIndex(e => e.ClientId)
                     .HasName("fkIdx_Invoice_Client");
 
                 entity.HasIndex(e => e.PaymentTypeId)
                     .HasName("fkIdx_Invoice_PaymentType");
-
-                entity.Property(e => e.InvoiceId).ValueGeneratedNever();
 
                 entity.Property(e => e.GrossAmount).HasColumnType("money");
 
@@ -96,10 +96,10 @@ namespace SyncHR.Demo.DataAccess
             {
                 entity.ToTable("InvoiceRow");
                 
+                entity.HasKey(e => e.InvoiceRowId);
+
                 entity.HasIndex(e => e.InvoiceId)
                     .HasName("fkIdx_InvoiceRow_Invoice");
-
-                entity.Property(e => e.InvoiceRowId).ValueGeneratedNever();
 
                 entity.Property(e => e.ProductName)
                     .IsRequired()
@@ -126,8 +126,8 @@ namespace SyncHR.Demo.DataAccess
             {
                 entity.ToTable("PaymentType");
                 
-                entity.Property(e => e.PaymentTypeId).ValueGeneratedNever();
-
+                entity.HasKey(e => e.PaymentTypeId);
+                
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(128)

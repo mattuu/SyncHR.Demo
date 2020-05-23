@@ -4,10 +4,11 @@ import { SharedModule } from '../shared/shared.module';
 
 import { MatSliderModule } from '@angular/material/slider';
 import { InvoiceListComponent, EditInvoiceComponent } from '.';
+import { InvoiceRowListComponent } from './invoice-row-list/invoice-row-list.component';
 
 
 @NgModule({
-  declarations: [InvoiceListComponent, EditInvoiceComponent],
+  declarations: [InvoiceListComponent, EditInvoiceComponent, InvoiceRowListComponent],
   imports: [
     CommonModule,
     SharedModule,

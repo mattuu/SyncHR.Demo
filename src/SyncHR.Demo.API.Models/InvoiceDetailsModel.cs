@@ -11,7 +11,7 @@ namespace SyncHR.Demo.API.Models
 
         public int Number { get; set; }
 
-        public ClientModel Client {get;set;}
+        public ClientModel Client { get; set; }
 
         public DateTime SellDate { get; set; }
 
@@ -21,7 +21,7 @@ namespace SyncHR.Demo.API.Models
 
         public bool IsPaid { get; set; }
 
-        public int PaymentTypeId { get; set; }
+        public PaymentTypeModel PaymentType { get; set; }
 
         public decimal GrossAmount { get; set; }
 

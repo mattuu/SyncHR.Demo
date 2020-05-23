@@ -43,6 +43,7 @@ namespace SyncHR.Demo.Api.Controllers
         {
             var query = _context.Invoices.Include(i => i.Rows)
                             .Include(i => i.Client)
+                            .Include(i => i.PaymentType)
                             .SingleOrDefault(i => i.InvoiceId == id);
 
             var model = _mapper.Map<InvoiceDetailsModel>(query);

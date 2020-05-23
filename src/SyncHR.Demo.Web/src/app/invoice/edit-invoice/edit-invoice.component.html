@@ -7,7 +7,7 @@
         </mat-form-field>
 
         <mat-form-field class="form-element">
-            <mat-label>Select</mat-label>
+            <mat-label>Month</mat-label>
             <mat-select formControlName="month" placeholder="Month" name="month">
                 <mat-option [value]="month.value" *ngFor="let month of months">{{month.label}}</mat-option>
             </mat-select>
@@ -54,14 +54,17 @@
         </mat-form-field>
         <mat-form-field class="form-element">
             <mat-label>Payment Type</mat-label>
-            <input matInput placeholder="Payment Type" formControlName="paymentType">
+            <mat-select formControlName="paymentType" placeholder="Payment Type">
+                <mat-option [value]="paymentType.id" *ngFor="let paymentType of paymentTypes">{{paymentType.name}}
+                </mat-option>
+            </mat-select>
         </mat-form-field>
     </div>
 
     <div>
         <mat-checkbox formControlName="isPaid">Is Paid</mat-checkbox>
     </div>
-    
+
     <div fxLayout="row" fxLayoutAlign="space-between" fxLayoutGap="10px">
         <mat-form-field class="form-element">
             <mat-label>Gross Amount</mat-label>
@@ -79,10 +82,6 @@
             [disabled]="busy">Submit</button>
         <button mat-raised-button [routerLink]="['/invoices']" color="secondary" [disabled]="busy">Cancel</button>
     </div>
-
-
 </form>
 
-<pre>{{ busy }}</pre>
-
-<pre>{{ invoice | json }}</pre>
+<app-invoice-row-list *ngIf="invoice" [rows]="invoice?.rows"></app-invoice-row-list>

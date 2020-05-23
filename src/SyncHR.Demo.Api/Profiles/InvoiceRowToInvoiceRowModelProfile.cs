@@ -9,7 +9,7 @@ namespace SyncHR.Demo.Api.Profiles
         public InvoiceRowToInvoiceRowModelProfile()
         {
             CreateMap<InvoiceRow, InvoiceRowModel>()
-                .ForMember(m => m.Id, cfg => cfg.MapFrom(ir => ir.InvoiceId));
+                .ForMember(m => m.Id, cfg => cfg.MapFrom(ir => ir.InvoiceRowId));
         }
     }
 }
