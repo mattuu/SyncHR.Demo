@@ -33,10 +33,14 @@ export class InvoiceRowListComponent implements OnInit {
     return this._rows;
   }
 
+  @Input()
+  public invoiceId: number;
+
   @ViewChild('invoiceRowsTable')
   table: MatTable<any>;
 
   dataSource: InvoiceRowsDataSource;
+  submitBusy: boolean;
 
   displayedColumns = ['productName', 'quantity', 'unit', 'unitPrice', 'actions']
 
@@ -61,55 +65,71 @@ export class InvoiceRowListComponent implements OnInit {
 
   deleteRow(id: number) {
     this._invoiceRowService.delete(id).subscribe(res => {
-      // const rows = [...this.rows];
-      // const item = rows.find(r => r['id'] === id)
-      // const index = rows.indexOf(item);
-      // const updatedRows = rows.splice(index);
-      // // debugger;
-
-      // this.dataSource = new InvoiceRowsDataSource(updatedRows);
-      this.dataSource.remove(id);
-
-      this.dataSource.connect().subscribe(() => {
+      this.dataSource.remove(id).subscribe(() => {
         this.table.renderRows();
       });
+
     }, error => {
       console.log(error);
     });
+  }
+
+  addRow(formGroup: FormGroup) {
+    if (formGroup.valid) {
+      const {
+        validate,
+        ...model
+      } = formGroup.value;
+
+      this.submitBusy = true;
+
+      this._invoiceRowService.create(this.invoiceId, formGroup.value)
+        .subscribe(() => {
+          this.dataSource.add(model).subscribe(() => {
+            this.table.renderRows();
+            this.newRowForm.reset();
+            this.newRowForm.setErrors([]);
+          });
+        }, error => {
+          console.log(error)
+        }, () => {
+          this.submitBusy = false;
+        });
+    }
   }
 
 }
 
 export class InvoiceRowsDataSource extends DataSource<any>
 {
-  private _recordChange$ = new Subject();
-
   constructor(private _rows: any[]) {
     super();
   }
 
-  remove(id: number) {
-    const rows = [...this._rows];
+  add(model: any): Observable<any> {
+    this._rows.push(model);
+
+    return of(this._rows);
+  }
+
+  remove(id: number): Observable<any> {
     const item = this._rows.find(r => r['id'] === id)
     const index = this._rows.indexOf(item);
     this._rows.splice(index, 1);
-    
-    console.log(this._rows);
 
-    this._recordChange$.next();
-
+    return of(this._rows);
   }
 
   connect(): Observable<any[] | readonly any[]> {
 
-    const changes = [
-      this._recordChange$
-    ];
+    // const changes = [
+    //   // this._recordChange$
+    // ];
 
-    return merge(...changes).pipe(
-      switchMap(() => of(this._rows)));
+    // return merge(...changes).pipe(
+    //   switchMap(() => of(this._rows)));
 
-    // return of(this._rows);
+    return of(this._rows);
   }
   disconnect(): void {
   }

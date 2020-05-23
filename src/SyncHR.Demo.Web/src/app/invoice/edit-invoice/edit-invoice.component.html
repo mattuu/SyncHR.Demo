@@ -84,4 +84,4 @@
     </div>
 </form>
 
-<app-invoice-row-list *ngIf="invoice" [rows]="invoice?.rows"></app-invoice-row-list>
+<app-invoice-row-list *ngIf="invoice" [rows]="invoice?.rows" [invoiceId]="id"></app-invoice-row-list>
