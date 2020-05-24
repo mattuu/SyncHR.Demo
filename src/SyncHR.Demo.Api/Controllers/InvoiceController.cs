@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +19,7 @@ namespace SyncHR.Demo.Api.Controllers
     [Route("[controller]")]
     public class InvoiceController : ControllerBase
     {
-        private readonly ILogger<InvoiceController> _logger;
+        private readonly ILogger _logger;
         private readonly SyncHRDemoContext _context;
         private readonly IMapper _mapper;
 

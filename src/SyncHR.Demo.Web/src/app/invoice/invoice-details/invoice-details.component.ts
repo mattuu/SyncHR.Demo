@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { InvoiceService } from '../invoice.service';
+import { InvoiceExportService } from '../invoice-export.service';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-invoice-details',
@@ -12,8 +14,12 @@ export class InvoiceDetailsComponent implements OnInit {
   id: number;
   busy: boolean;
   invoice: any;
+  downloadBusy: boolean;
 
-  constructor(private _route: ActivatedRoute, private _invoiceService: InvoiceService, private _router: Router) { }
+  constructor(private _route: ActivatedRoute,
+    private _invoiceService: InvoiceService,
+    private _invoiceExportService: InvoiceExportService,
+    private _router: Router) { }
 
   ngOnInit(): void {
     this.busy = true;
@@ -49,5 +55,16 @@ export class InvoiceDetailsComponent implements OnInit {
     })
   }
 
+  download() {
+    this.downloadBusy = true;
+    this._invoiceExportService.getPdf(this.id).subscribe(blob => {
+      let fileName = `${this.invoice.client.name}`;
+      saveAs(blob,  `${fileName}_${this.invoice.number}.pdf`);
+    }, error => {
+      debugger
+    }, () => {
+      this.downloadBusy = false;
+    })
+  }
 
 }

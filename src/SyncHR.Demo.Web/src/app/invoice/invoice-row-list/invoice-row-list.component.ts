@@ -1,20 +1,12 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { DataSource } from '@angular/cdk/table';
-import { of, Observable, Subject, merge } from 'rxjs';
-import { FormBuilder, FormGroup, Validators, NgModel } from '@angular/forms';
+import { of, Observable } from 'rxjs';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { InvoiceRowService } from 'src/app/shared/invoice-row.service';
 import { MatTable } from '@angular/material/table';
-import { switchMap, map, mergeMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
-export interface IInvoiceRowModel {
-  'id': number;
-  'productName': string;
-  'quantity': number;
-  'unit': string;
-  'unitPrice': number;
-}
-
-export enum Mode {
+enum Mode {
   default,
   edit,
   add

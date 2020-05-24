@@ -17,7 +17,7 @@ export interface ICreateOrUpdateInvoiceModel {
   netAmount: number;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class InvoiceService {
   constructor(private _httpClient: HttpClient) {
   }

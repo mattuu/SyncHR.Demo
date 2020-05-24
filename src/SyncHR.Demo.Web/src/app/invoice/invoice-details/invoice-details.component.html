@@ -26,7 +26,7 @@
 
         <mat-card fxFlex="grow">
             <mat-card-title>Month</mat-card-title>
-            <mat-card-content>{{ invoice.month }}</mat-card-content>
+            <mat-card-content>{{ invoice.month | monthName }}</mat-card-content>
         </mat-card>
 
         <mat-card fxFlex="grow">
@@ -81,6 +81,7 @@
     <div fxLayout="row" fxLayoutAlign="space-between" fxLayoutGap="10px">
         <button mat-raised-button [routerLink]="['/invoices']" routerLinkActive="router-link-active">Back</button>
         <div fxLayout="row" fxLayoutGap="10px">
+            <button mat-raised-button color="accent" (click)="download()" type="button" [class.spinner]="downloadBusy" [disabled]="downloadBusy">Download PDF</button>
             <button mat-raised-button color="primary" [routerLink]="['/invoice', id, 'edit']"
                 routerLinkActive="router-link-active">Edit</button>
             <button mat-raised-button color="warn" type="button" [disabled]="busy" class="pull-right"
