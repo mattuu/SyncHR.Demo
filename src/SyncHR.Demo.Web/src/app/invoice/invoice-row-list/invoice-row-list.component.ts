@@ -78,14 +78,16 @@ export class InvoiceRowListComponent implements OnInit {
   }
 
   deleteRow(id: number) {
-    this._invoiceRowService.delete(id).subscribe(res => {
-      this.dataSource.remove(id).subscribe(() => {
-        this.table.renderRows();
-      });
+    if (window.confirm("Are you sure you want to delete this row?")) {
+      this._invoiceRowService.delete(id).subscribe(res => {
+        this.dataSource.remove(id).subscribe(() => {
+          this.table.renderRows();
+        });
 
-    }, error => {
-      console.log(error);
-    });
+      }, error => {
+        console.log(error);
+      });
+    }
   }
 
   submit(formGroup: FormGroup) {
@@ -114,6 +116,7 @@ export class InvoiceRowListComponent implements OnInit {
         switch (this.mode) {
           case 1:
             this.switchToDefaultView();
+            this.dataSource = new InvoiceRowsDataSource(this._invoiceRowService, this.invoiceId);
             break;
           case 2:
             this.dataSource.add(model).subscribe(() => {
@@ -194,7 +197,6 @@ export class InvoiceRowsDataSource extends DataSource<any>
 
     return of(this._rows);
   }
-
 
   remove(id: number): Observable<any> {
     const item = this._rows.find(r => r['id'] === id)
