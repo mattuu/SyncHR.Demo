@@ -2,7 +2,8 @@
 
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons");
 
-:host, html {
+:host,
+html {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif,
         "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     font-size: 14px;
@@ -216,6 +217,14 @@ a:hover {
 
 .pull-right {
     float: right;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-center {
+    text-align: center;
 }
 
 svg#clouds {

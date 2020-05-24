@@ -20,6 +20,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { MonthNamePipe } from './month-name.pipe';
 
 const MAT_MODULES = [
   MatSliderModule,
@@ -49,7 +50,7 @@ const MODULES_FOR_REEXPORT = [
 ]
 
 @NgModule({
-  declarations: [],
+  declarations: [MonthNamePipe],
   imports: [
     CommonModule,
     ...MODULES_FOR_REEXPORT,
@@ -58,7 +59,7 @@ const MODULES_FOR_REEXPORT = [
   exports: [
     ...MODULES_FOR_REEXPORT,
     ...MAT_MODULES,
-
+    MonthNamePipe
   ]
 })
 export class SharedModule { }

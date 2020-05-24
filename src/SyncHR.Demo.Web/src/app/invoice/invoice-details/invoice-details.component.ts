@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { InvoiceService } from '../invoice.service';
-import { MONTHS } from '../months';
 
 @Component({
   selector: 'app-invoice-details',
@@ -13,7 +12,6 @@ export class InvoiceDetailsComponent implements OnInit {
   id: number;
   busy: boolean;
   invoice: any;
-  month: string;
 
   constructor(private _route: ActivatedRoute, private _invoiceService: InvoiceService, private _router: Router) { }
 
@@ -24,7 +22,6 @@ export class InvoiceDetailsComponent implements OnInit {
 
       this._invoiceService.find(this.id).subscribe(res => {
         this.invoice = res;
-        this.month = MONTHS.find(m => m.value === this.invoice.month).label;
       }, error => {
         // TODO handle error...
       }, () => {
