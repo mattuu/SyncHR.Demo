@@ -4,7 +4,7 @@
 
     <table mat-table [dataSource]="dataSource" #invoiceRowsTable class="mat-elevation-z8">
         <ng-container matColumnDef="productName">
-            <th mat-header-cell *matHeaderCellDef> Name </th>
+            <th mat-header-cell *matHeaderCellDef> Product Name </th>
             <td mat-cell *matCellDef="let element; let i = index">
                 <app-invoice-row-list-cell [editable]="mode === 1 && selectedRowId === i">
                     <mat-form-field appearance="standard" editTemplate>
@@ -82,8 +82,8 @@
         </ng-container>
 
         <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef> Actions </th>
-            <td mat-cell *matCellDef="let element; let i = index" class="actionsColumn">
+            <th mat-header-cell *matHeaderCellDef class="actionColumn text-center"> Actions </th>
+            <td mat-cell *matCellDef="let element; let i = index" class="actionsColumn text-center">
 
                 <ng-container *ngIf="mode === 1 && selectedRowId === i">
                     <button mat-icon-button color="primary" type="submit" class="button"
@@ -105,7 +105,7 @@
                 </ng-container>
 
             </td>
-            <td mat-footer-cell *matFooterCellDef class="actionsColumn">
+            <td mat-footer-cell *matFooterCellDef class="actionsColumn" class="actionColumn text-center">
 
                 <ng-container [ngSwitch]="mode">
                     <ng-container *ngSwitchCase="2">
@@ -133,5 +133,3 @@
         <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
     </table>
 </form>
-
-<!-- <pre>{{ dataSource | json }}</pre> -->

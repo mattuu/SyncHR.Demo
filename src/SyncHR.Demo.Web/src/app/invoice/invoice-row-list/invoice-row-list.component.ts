@@ -4,7 +4,7 @@ import { of, Observable, Subject, merge } from 'rxjs';
 import { FormBuilder, FormGroup, Validators, NgModel } from '@angular/forms';
 import { InvoiceRowService } from 'src/app/shared/invoice-row.service';
 import { MatTable } from '@angular/material/table';
-import { switchMap, map } from 'rxjs/operators';
+import { switchMap, map, mergeMap } from 'rxjs/operators';
 
 export interface IInvoiceRowModel {
   'id': number;
@@ -80,10 +80,8 @@ export class InvoiceRowListComponent implements OnInit {
   deleteRow(id: number) {
     if (window.confirm("Are you sure you want to delete this row?")) {
       this._invoiceRowService.delete(id).subscribe(res => {
-        this.dataSource.remove(id).subscribe(() => {
-          this.table.renderRows();
-        });
-
+        this.dataSource = new InvoiceRowsDataSource(this._invoiceRowService, this.invoiceId);
+        this.switchToDefaultView();
       }, error => {
         console.log(error);
       });
@@ -113,20 +111,8 @@ export class InvoiceRowListComponent implements OnInit {
       }
 
       action.subscribe(() => {
-        switch (this.mode) {
-          case 1:
-            this.switchToDefaultView();
-            this.dataSource = new InvoiceRowsDataSource(this._invoiceRowService, this.invoiceId);
-            break;
-          case 2:
-            this.dataSource.add(model).subscribe(() => {
-              this.switchToDefaultView();
-            });
-            break;
-          default:
-            break;
-        }
-
+        this.dataSource = new InvoiceRowsDataSource(this._invoiceRowService, this.invoiceId);
+        this.switchToDefaultView();
       }, error => {
         console.log(error)
       }, () => {
@@ -192,23 +178,9 @@ export class InvoiceRowsDataSource extends DataSource<any>
     return of(item);
   }
 
-  add(model: any): Observable<any> {
-    this._rows.push(model);
-
-    return of(this._rows);
-  }
-
-  remove(id: number): Observable<any> {
-    const item = this._rows.find(r => r['id'] === id)
-    const index = this._rows.indexOf(item);
-    this._rows.splice(index, 1);
-
-    return of(this._rows);
-  }
-
   connect(): Observable<any[] | readonly any[]> {
     return this._invoiceRowService.getByInvoiceId(this.invoiceId)
-      .pipe(map(_ => this._rows = _));
+      .pipe(map(val => this._rows = val));
   }
 
   disconnect(): void {
