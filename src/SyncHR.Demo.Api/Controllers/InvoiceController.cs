@@ -52,6 +52,15 @@ namespace SyncHR.Demo.Api.Controllers
             return Ok(model);
         }
 
+        [HttpGet("{id}/rows")]
+        public IActionResult GetRows(int id)
+        {
+            var query = _context.InvoiceRows
+                .Where(ir => ir.InvoiceId == id);
+
+            return Ok(_mapper.Map<IEnumerable<InvoiceRowModel>>(query));
+        }
+
         [HttpPost()]
         public IActionResult Post([FromBody] CreateOrUpdateInvoiceModel model)
         {
@@ -89,6 +98,7 @@ namespace SyncHR.Demo.Api.Controllers
             query.IssueDate = model.IssueDate;
             query.SellDate = model.SellDate;
             query.IsPaid = model.IsPaid;
+            query.PayTime = model.PayTime;
             query.PaymentTypeId = model.PaymentTypeId;
             query.ClientId = model.ClientId;
             query.GrossAmount = model.GrossAmount;

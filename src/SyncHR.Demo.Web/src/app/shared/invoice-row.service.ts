@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { InvoiceRowsDataSource } from '../invoice/invoice-row-list/invoice-row-list.component';
+import { Observable } from 'rxjs';
 
 export interface ICreateOrUpdateInvoiceRowModel {
   'productName': string;
@@ -13,6 +14,10 @@ export interface ICreateOrUpdateInvoiceRowModel {
 @Injectable({ providedIn: 'root' })
 export class InvoiceRowService {
   constructor(private _httpClient: HttpClient) { }
+
+  getByInvoiceId(id: number): Observable<any> {
+    return this._httpClient.get(`${environment.baseUrl}/invoice/${id}/rows`)
+  }
 
   update(id: number, model: InvoiceRowsDataSource | any) {
     return this._httpClient.put(`${environment.baseUrl}/invoiceRow/${id}`, model);

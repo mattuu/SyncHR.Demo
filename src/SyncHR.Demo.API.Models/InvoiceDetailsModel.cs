@@ -26,7 +26,5 @@ namespace SyncHR.Demo.API.Models
         public decimal GrossAmount { get; set; }
 
         public decimal NetAmount { get; set; }
-
-        public IEnumerable<InvoiceRowModel> Rows { get; set; }
     }
 }

@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { map } from 'rxjs/internal/operators/map';
-import { catchError } from 'rxjs/internal/operators/catchError';
 
 export interface ICreateOrUpdateInvoiceModel {
   year: number;

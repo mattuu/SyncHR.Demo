@@ -1,6 +1,12 @@
 <h1>Edit Invoice Header</h1>
 
-<form *ngIf="invoice" [formGroup]="invoiceFormGroup" (ngSubmit)="onSubmit(invoiceFormGroup)">
+<ng-template #busyTemplate>
+    <div fxLayoutGrid="column" fxLayoutAlign="center">
+        <mat-spinner mode="indeterminate"></mat-spinner>
+    </div>
+</ng-template>
+
+<form *ngIf="!busy; else busyTemplate" [formGroup]="invoiceFormGroup" (ngSubmit)="onSubmit(invoiceFormGroup)">
     <div fxLayout="row" fxLayoutAlign="space-between" fxLayoutGap="10px">
         <mat-form-field class="form-element">
             <mat-label>Year</mat-label>
@@ -46,13 +52,7 @@
             <mat-datepicker-toggle matSuffix [for]="issueDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #issueDatePicker></mat-datepicker>
         </mat-form-field>
-    </div>
 
-    <div fxLayout="row" fxLayoutAlign="space-evenly" fxLayoutGap="10px">
-        <mat-form-field class="form-element">
-            <mat-label>Pay Time</mat-label>
-            <input matInput placeholder="Pay Time" type="number" formControlName="payTime" min="1" max="30">
-        </mat-form-field>
         <mat-form-field class="form-element">
             <mat-label>Payment Type</mat-label>
             <mat-select formControlName="paymentType" placeholder="Payment Type">
@@ -62,11 +62,7 @@
         </mat-form-field>
     </div>
 
-    <div>
-        <mat-checkbox formControlName="isPaid">Is Paid</mat-checkbox>
-    </div>
-
-    <div fxLayout="row" fxLayoutAlign="stretch" fxLayoutGap="10px">
+    <div fxLayout="row" fxLayoutAlign="space-evenly" fxLayoutGap="10px">
         <mat-form-field class="form-element">
             <mat-label>Gross Amount</mat-label>
             <input matInput placeholder="Gross Amount" type="number" formControlName="grossAmount">
@@ -79,16 +75,20 @@
     </div>
 
     <div fxLayout="row" fxLayoutAlign="stretch" fxLayoutGap="10px">
-        <div fxFlex="70" fxLayout="row" fxLayoutAligh="stretch" fxLayoutGap="10px">
-            <button mat-raised-button color="primary" type="submit" class="button" [class.spinner]="busy"
-                [disabled]="busy">Submit</button> 
-            <button mat-raised-button [routerLink]="['/invoices']" [disabled]="busy">Cancel</button>
-        </div>
         <div fxFlex="30">
-            <button mat-raised-button color="warn" type="button" [disabled]="busy" class="pull-right"
-                (click)="deleteInvoice()">Delete</button>
+            <span class="mat-slide-toggle-content">Pay Time (days)</span>
+            <mat-slider thumbLabel min="1" max="30" step="1" formControlName="payTime"></mat-slider>
+        </div>
+        <div fxFlex="20">
+            <mat-slide-toggle formControlName="isPaid">Is Paid</mat-slide-toggle>
+        </div>
+        <div fxFlex="50">
+            <div fxLayout="row" fxLayoutAlign="end" fxLayoutGap="10px">
+                <button mat-raised-button color="primary" type="submit" class="button" [class.spinner]="busy"
+                    [disabled]="busy">Submit</button>
+                <button mat-raised-button type="button" (click)="cancel(invoiceFormGroup)"
+                    [disabled]="busy">Cancel</button>
+            </div>
         </div>
     </div>
 </form>
-
-<app-invoice-row-list *ngIf="invoice" [rows]="invoice?.rows" [invoiceId]="id"></app-invoice-row-list>

@@ -1,0 +1,92 @@
+<div fxLayout="row" fxLayoutAlign="space-between">
+    <h2>Invoice Details</h2>
+    <div fxFlexAlign="end" *ngIf="invoice">
+        <mat-chip-list>
+            <mat-chip [class.success-chip]="invoice.isPaid">
+                <mat-icon *ngIf="invoice.isPaid">done</mat-icon>
+                {{ invoice.isPaid ? 'Paid' : 'Pending payment'}}
+            </mat-chip>
+        </mat-chip-list>
+    </div>
+</div>
+
+<ng-template #busyTemplate>
+    <div fxLayoutGrid="column" fxLayoutAlign="center">
+        <mat-spinner mode="indeterminate"></mat-spinner>
+    </div>
+</ng-template>
+
+<div *ngIf="!busy; else busyTemplate" fxLayout="column" fxLayoutGap="10px">
+    <div fxLayout="row" fxLayoutAlign="space-between" fxLayoutGap="10px">
+
+        <mat-card fxFlex="grow">
+            <mat-card-title>Year</mat-card-title>
+            <mat-card-content>{{ invoice.year }}</mat-card-content>
+        </mat-card>
+
+        <mat-card fxFlex="grow">
+            <mat-card-title>Month</mat-card-title>
+            <mat-card-content>{{ month }}</mat-card-content>
+        </mat-card>
+
+        <mat-card fxFlex="grow">
+            <mat-card-title>Number</mat-card-title>
+            <mat-card-content>{{ invoice.number }}</mat-card-content>
+        </mat-card>
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="space-between" fxLayoutGap="10px">
+        <mat-card fxFlex="grow">
+            <mat-card-title>Client</mat-card-title>
+            <mat-card-content>{{ invoice.client.name }}</mat-card-content>
+        </mat-card>
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="space-between" fxLayoutGap="10px">
+        <mat-card fxFlex="grow">
+            <mat-card-title>Sale Date</mat-card-title>
+            <mat-card-content>{{ invoice.sellDate | date: 'dd MMMM yyyy' }}</mat-card-content>
+        </mat-card>
+
+        <mat-card fxFlex="grow">
+            <mat-card-title>Issue Date</mat-card-title>
+            <mat-card-content>{{ invoice.issueDate | date: 'dd MMMM yyyy' }}</mat-card-content>
+        </mat-card>
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="space-between" fxLayoutGap="10px">
+        <mat-card fxFlex="grow">
+            <mat-card-title>Gross Amount</mat-card-title>
+            <mat-card-content>{{ invoice.grossAmount | number : '1.2-2' }}</mat-card-content>
+        </mat-card>
+
+        <mat-card fxFlex="grow">
+            <mat-card-title>Net Amount</mat-card-title>
+            <mat-card-content>{{ invoice.netAmount | number : '1.2-2' }}</mat-card-content>
+        </mat-card>
+
+        <mat-card fxFlex="grow">
+            <mat-card-title>Payment Type</mat-card-title>
+            <mat-card-content>{{ invoice.paymentType.name }}</mat-card-content>
+        </mat-card>
+
+        <mat-card fxFlex="grow">
+            <mat-card-title>Pay Time</mat-card-title>
+            <mat-card-content>{{ invoice.payTime }} days</mat-card-content>
+        </mat-card>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div fxLayout="row" fxLayoutAlign="space-between" fxLayoutGap="10px">
+        <button mat-raised-button [routerLink]="['/invoices']" routerLinkActive="router-link-active">Back</button>
+        <div fxLayout="row" fxLayoutGap="10px">
+            <button mat-raised-button color="primary" [routerLink]="['/invoice', id, 'edit']"
+                routerLinkActive="router-link-active">Edit</button>
+            <button mat-raised-button color="warn" type="button" [disabled]="busy" class="pull-right"
+                (click)="deleteInvoice()">Delete</button>
+        </div>
+    </div>
+</div>
+
+<app-invoice-row-list [invoiceId]="id"></app-invoice-row-list>

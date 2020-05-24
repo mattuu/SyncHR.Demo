@@ -8,7 +8,6 @@ import { ClientService } from 'src/app/shared/client.service';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { AppDateAdapter, APP_DATE_FORMATS } from 'src/app/shared/date-adapter';
 import { PaymentTypeService } from 'src/app/shared/payment-type.service';
-import { error } from 'protractor';
 
 const MONTHS = [
   { value: 1, label: 'January' },
@@ -80,6 +79,7 @@ export class EditInvoiceComponent implements OnInit {
 
   ngOnInit(): void {
     const paymentTypesPromise = this._paymentTypeService.get();
+    this.busy = true;
 
     this._route.params.subscribe(p => {
       this.id = +p['id'];
@@ -103,6 +103,10 @@ export class EditInvoiceComponent implements OnInit {
         const invoiceModel = { ...invoiceHeader, 'paymentType': paymentTypeId, 'validate': '' };
 
         this.invoiceFormGroup.setValue(invoiceModel);
+      }, error => {
+        // TODO handle errors...
+      }, () => {
+        this.busy = false;
       })
     })
 
@@ -129,12 +133,12 @@ export class EditInvoiceComponent implements OnInit {
 
     const model = { ...formGroup.value, 'clientId': formGroup.get('client').value.id, 'paymentTypeId': formGroup.get('paymentType').value };
 
-    const action = this.mode === model.edit ?
+    const action = this.mode === Mode.edit ?
       this._invoiceService.update(this.id, model) :
       this._invoiceService.create(model);
 
-    action.subscribe(() => {
-      this._router.navigate(['invoices']);
+    action.subscribe(id => {
+      this._navigateAway();
       // TODO: display success message...
     }, error => {
       debugger;
@@ -144,14 +148,25 @@ export class EditInvoiceComponent implements OnInit {
     });
   }
 
-  deleteInvoice(){
-    this._invoiceService.delete(this.id).subscribe(() => {
-      this._router.navigate(['invoices']);
-      //TODO: display success message...
-    }, error => {
-      debugger;
-      console.log(error);
-    })
+  cancel(formGroup: FormGroup) {
+    if (formGroup.dirty || formGroup.touched) {
+      const confirm = window.confirm("You have some unsaved changes. Are you sure you want to proceed?");
+      if (confirm) {
+        this._navigateAway();
+      }
+      return;
+    }
+
+    this._navigateAway();
+  }
+
+  onPayTimeChange(e: any) {
+    this.invoiceFormGroup.get('payTime').setValue(+e.value);
+  }
+
+  private _navigateAway() {
+    const route = this.mode === Mode.edit ? ['invoice', this.id] : ['invoices'];
+    this._router.navigate(route);
   }
 
   private createForm() {

@@ -4,7 +4,7 @@ import { of, Observable, Subject, merge } from 'rxjs';
 import { FormBuilder, FormGroup, Validators, NgModel } from '@angular/forms';
 import { InvoiceRowService } from 'src/app/shared/invoice-row.service';
 import { MatTable } from '@angular/material/table';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
 
 export interface IInvoiceRowModel {
   'id': number;
@@ -28,11 +28,11 @@ export enum Mode {
 export class InvoiceRowListComponent implements OnInit {
 
   private _rows: any[];
+  private _invoiceId: number;
 
   @Input()
   set rows(val: any[]) {
     this._rows = val;
-    this.dataSource = new InvoiceRowsDataSource(val);
   }
 
   get rows(): any[] {
@@ -44,7 +44,14 @@ export class InvoiceRowListComponent implements OnInit {
   }
 
   @Input()
-  public invoiceId: number;
+  set invoiceId(val: number) {
+    this._invoiceId = val;
+    this.dataSource = new InvoiceRowsDataSource(this._invoiceRowService, val);
+  }
+
+  get invoiceId(): number {
+    return this._invoiceId;
+  }
 
   @ViewChild('invoiceRowsTable')
   table: MatTable<any>;
@@ -57,11 +64,6 @@ export class InvoiceRowListComponent implements OnInit {
   displayedColumns = ['productName', 'quantity', 'unit', 'unitPrice', 'actions']
 
   invoiceRowForm: FormGroup;
-
-  // 'productName': 'Wine - Cotes Du Rhone',
-  //   'quantity': 16.66,
-  //   'unit': 'item',
-  //   'unitPrice': 90.67
 
   constructor(private _formBuilder: FormBuilder, private _invoiceRowService: InvoiceRowService) { }
 
@@ -176,7 +178,9 @@ export class InvoiceRowListComponent implements OnInit {
 
 export class InvoiceRowsDataSource extends DataSource<any>
 {
-  constructor(private _rows: any[]) {
+  private _rows: any[];
+
+  constructor(private _invoiceRowService: InvoiceRowService, public invoiceId: number) {
     super();
   }
 
@@ -201,16 +205,10 @@ export class InvoiceRowsDataSource extends DataSource<any>
   }
 
   connect(): Observable<any[] | readonly any[]> {
-
-    // const changes = [
-    //   // this._recordChange$
-    // ];
-
-    // return merge(...changes).pipe(
-    //   switchMap(() => of(this._rows)));
-
-    return of(this._rows);
+    return this._invoiceRowService.getByInvoiceId(this.invoiceId)
+      .pipe(map(_ => this._rows = _));
   }
+
   disconnect(): void {
   }
 

@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableModule } from '@angular/material/table';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
@@ -15,10 +16,14 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatDividerModule } from '@angular/material/divider';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 const MAT_MODULES = [
   MatSliderModule,
+  MatSlideToggleModule,
   MatTableModule,
   MatFormFieldModule,
   MatInputModule,
@@ -29,7 +34,10 @@ const MAT_MODULES = [
   MatCheckboxModule,
   MatButtonModule,
   MatProgressSpinnerModule,
-  MatIconModule
+  MatIconModule,
+  MatCardModule,
+  MatChipsModule,
+  MatDividerModule
 ]
 
 const MODULES_FOR_REEXPORT = [

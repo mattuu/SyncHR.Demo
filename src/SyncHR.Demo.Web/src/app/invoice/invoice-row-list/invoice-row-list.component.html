@@ -2,7 +2,7 @@
 
 <form [formGroup]="invoiceRowForm" (ngSubmit)="submit(invoiceRowForm)">
 
-    <table mat-table [dataSource]="rows" #invoiceRowsTable class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" #invoiceRowsTable class="mat-elevation-z8">
         <ng-container matColumnDef="productName">
             <th mat-header-cell *matHeaderCellDef> Name </th>
             <td mat-cell *matCellDef="let element; let i = index">
@@ -133,3 +133,5 @@
         <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
     </table>
 </form>
+
+<!-- <pre>{{ dataSource | json }}</pre> -->
